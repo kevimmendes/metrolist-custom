@@ -18,8 +18,13 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      # O setup-android@v3 instala por padrão o pacote "tools", que foi removido
+      # dos repositórios do SDK -> "Failed to find package 'tools'". Aqui passamos
+      # explicitamente os pacotes que o build precisa (compileSdk 37).
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-37 build-tools;37.0.0'
 
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
@@ -31,5 +36,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: metrolist-foss-debug
-          path: app/build/outputs/apk/universalFoss/debug/*.apk
+          path: app/build/outputs/apk/foss/debug/*.apk
           if-no-files-found: error
