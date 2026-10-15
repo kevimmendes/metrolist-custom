@@ -18,13 +18,18 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      # O setup-android@v3 instala por padrão o pacote "tools", que foi removido
-      # dos repositórios do SDK -> "Failed to find package 'tools'". Aqui passamos
-      # explicitamente os pacotes que o build precisa (compileSdk 37).
+      # Dois ajustes em relação ao passo que quebrava:
+      #  - o setup-android@v3 tenta instalar o pacote "tools" por padrão, que foi
+      #    removido dos repositórios do SDK ("Failed to find package 'tools'").
+      #  - API 37 não existe como "platforms;android-37"; o Android publica a
+      #    versão menor "platforms;android-37.0" (compileSdk = 37 no AGP 9.4).
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'platform-tools platforms;android-37 build-tools;37.0.0'
+          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0 build-tools;37.0.0'
+
+      - name: Show installed platforms
+        run: ls -la "${ANDROID_HOME}/platforms" || true
 
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
